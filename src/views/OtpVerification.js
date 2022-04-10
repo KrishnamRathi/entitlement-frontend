@@ -7,7 +7,7 @@ import '../static/styles/common.css'
 import instance from '../firebase/otp_verification'
 
 
-function OtpVerification() {
+function OtpVerification({setLoading}) {
   const [code, setCode] = useState("");
   const navigate = useNavigate();
   const otp_verification = instance;
@@ -28,11 +28,19 @@ function OtpVerification() {
 
   }, [])
   
-  function successfullVerification(){
-    window.localStorage.setItem("isVerified", true);
-    navigate(`/emergency_address/${phoneNumber}`)
+  const callback = {
+    successfullVerification: () => {
+      window.localStorage.setItem("isVerified", true);
+      navigate(`/emergency_address/${phoneNumber}`)
+      setLoading(false);
+    },
+    failedVerification: () => {
+      window.alert("OTP verification failed.");
+      navigate("/");
+      window.location.reload();
+      setLoading(false);
+    }
   }
-
   return (
     <div style={{padding: 20, backgroundColor: common.colors.blueLight, height: '100vh'}}>
         <div style={{backgroundColor: common.colors.light, padding: 15}}>
@@ -63,7 +71,8 @@ function OtpVerification() {
             if(code.length === 0){
               window.alert("Please enter OTP");
             }else{
-              await otp_verification.verifyOtp(code, successfullVerification);
+              setLoading(true);
+              await otp_verification.verifyOtp(code, callback);
             }
           }}
         />

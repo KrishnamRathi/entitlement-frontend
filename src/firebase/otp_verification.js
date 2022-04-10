@@ -29,22 +29,25 @@ class OtpVerification{
             .then((confirmationResult) => {
                 console.log("OTP sent to "+phoneNumber);
                 window.confirmationResult = confirmationResult;
-                callback();
+                callback.redirectToVerification();
             }).catch((error) => {
                 console.log("error while sending otp", error);
-                window.recaptchaVerifier.reset();
+                callback.failedSendingOtp();
+                // window.recaptchaVerifier.reset();
             });
     }
 
     async verifyOtp(code, callback){
         let confirmationResult = window.confirmationResult;
-        confirmationResult.confirm(code).then((result) => {
+        confirmationResult.confirm(code)
+          .then((result) => {
             // User signed in successfully.
             const user = result.user;
             console.log(user, "Successfully verified");
-            callback();
-          }).catch((error) => {
-            window.alert("Invalid OTP")
+            callback.successfullVerification();
+          })
+          .catch((error) => {
+            callback.failedVerification();
             console.log(error, "Failed to verify");
       });
     }

@@ -6,7 +6,7 @@ import common from '../static/styles/common';
 import { useNavigate, useParams } from 'react-router-dom';
 import URL from '../baseUrl';
 
-function EmergencyAddress() {
+function EmergencyAddress({setLoading}) {
 	const [name, setName] = useState("");
 	const [address, setAddress] = useState("");
 	const [city, setCity] = useState("");
@@ -33,6 +33,7 @@ function EmergencyAddress() {
 	async function submitAddress(){
        if(name && address && city && postalCode && country){
 			// post api call for emergency address
+            setLoading(true);
             const data = {
                 "fullname": name,
                 "city": city,
@@ -54,9 +55,11 @@ function EmergencyAddress() {
                     console.log('Success:', data);
                     window.localStorage.setItem("isAddressAdded", true);
                     window.alert("Verification completed successfully.");
+                    setLoading(false);
                 })
                 .catch((error) => {
-                    window.alert("Error while submitting address. Try Again.")
+                    window.alert("Error while submitting address. Try Again.");
+                    setLoading(false);
                 });
 		} else{
 			window.alert("Please fill all the required entries.");

@@ -6,7 +6,7 @@ import common from '../static/styles/common';
 import Button from '../components/Button';
 import instance from '../firebase/otp_verification';
 
-function TermsConditions({navigation}) {
+function TermsConditions({setLoading}) {
   const [phoneNumber] = useState("8435912066");
   const [checked, setChecked] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -25,8 +25,16 @@ function TermsConditions({navigation}) {
     }
   }, [])
 
-  function redirectToVerification(){
-    navigate(`/verification/${phoneNumber}`);
+  const callback = {
+    redirectToVerification: () => {
+      navigate(`/verification/${phoneNumber}`);
+      setLoading(false);
+    },
+    failedSendingOtp: () => {
+      window.alert("Failed to send OTP. Try Again");
+      setLoading(false);
+      window.location.reload();
+    }
   }
 
   return (
@@ -53,8 +61,9 @@ function TermsConditions({navigation}) {
             disabled={disabled}
             onClick={async () => {
               if(checked){
+                setLoading(true);
                 await otp_verification.recaptchaVerifierInvisible();
-                await otp_verification.sendOtp(phoneNumber, redirectToVerification);
+                await otp_verification.sendOtp(phoneNumber, callback);
               } else{
                 window.alert("Please agree to Terms & Conditions.")
               }
