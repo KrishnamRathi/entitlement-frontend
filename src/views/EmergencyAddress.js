@@ -13,7 +13,7 @@ function EmergencyAddress({setLoading}) {
 	const [postalCode, setPostalCode] = useState("");
 	const [country, setCountry] = useState("");
 	const navigate = useNavigate();
-    const { phoneNumber } = useParams();
+    const { phoneNumber, mcc, mnc } = useParams();
 
     useEffect(() => {
         const isVerified = window.localStorage.getItem("isVerified");
@@ -28,7 +28,7 @@ function EmergencyAddress({setLoading}) {
             navigate('/');
             window.alert("Not able to fetch mobile number.");
         }
-      }, [])
+      }, [phoneNumber, mcc, mnc, navigate])
 
 	async function submitAddress(){
        if(name && address && city && postalCode && country){
@@ -63,7 +63,7 @@ function EmergencyAddress({setLoading}) {
                 });
 		} else{
 			window.alert("Please fill all the required entries.");
-			navigate(`/emergency_address/${phoneNumber}`)
+			navigate(`/emergency_address/${phoneNumber}/${mcc}/${mnc}`)
 		}
 	}
 

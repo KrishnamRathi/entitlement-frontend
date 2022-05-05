@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../static/styles/common.css'
 import TermsConditionsData from '../components/TermsConditionsData';
 import common from '../static/styles/common';
@@ -7,10 +7,10 @@ import Button from '../components/Button';
 import instance from '../firebase/otp_verification';
 
 function TermsConditions({setLoading}) {
-  const [phoneNumber] = useState("8435912066");
   const [checked, setChecked] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const otp_verification = instance;
+  const { phoneNumber, mcc, mnc } = useParams();
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -21,13 +21,25 @@ function TermsConditions({setLoading}) {
       setDisabled(true);
     }
     else if(isVerified){
-      navigate(`/emergency_address/${phoneNumber}`);
+      navigate(`/emergency_address/${phoneNumber}/${mcc}/${mnc}`);
+    }console.log(mcc, mnc);
+    if(!isValidMobileNumber(phoneNumber) || !mnc || !mcc){
+      window.alert("Invalid mobile number. Please try again.");
+      navigate('/');
     }
-  }, [])
+  }, [phoneNumber, mcc, mnc, navigate])
+
+  const isValidMobileNumber = (phone_number) => {
+    if(!phone_number || phone_number.length!==10 || isNaN(parseInt(phone_number))){
+      return false;
+    }
+
+    return true;
+  }
 
   const callback = {
     redirectToVerification: () => {
-      navigate(`/verification/${phoneNumber}`);
+      navigate(`/verification/${phoneNumber}/${mcc}/${mnc}`);
       setLoading(false);
     },
     failedSendingOtp: () => {

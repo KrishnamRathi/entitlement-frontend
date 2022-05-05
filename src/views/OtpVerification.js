@@ -11,12 +11,12 @@ function OtpVerification({setLoading}) {
   const [code, setCode] = useState("");
   const navigate = useNavigate();
   const otp_verification = instance;
-  const { phoneNumber } = useParams();
+  const { phoneNumber, mcc, mnc } = useParams();
 
   useEffect(() => {
     const isVerified = window.localStorage.getItem("isVerified");
     if(isVerified){
-      navigate(`/emergency_address/${phoneNumber}`);
+      navigate(`/emergency_address/${phoneNumber}/${mcc}/${mnc}`);
     }else{
       // navigate('/');
     }
@@ -26,12 +26,12 @@ function OtpVerification({setLoading}) {
       window.alert("Failed to fetch Phone Number. Try again.");
     }
 
-  }, [])
+  }, [phoneNumber, mcc, mnc, navigate])
   
   const callback = {
     successfullVerification: () => {
       window.localStorage.setItem("isVerified", true);
-      navigate(`/emergency_address/${phoneNumber}`)
+      navigate(`/emergency_address/${phoneNumber}/${mcc}/${mnc}`)
       setLoading(false);
     },
     failedVerification: () => {
