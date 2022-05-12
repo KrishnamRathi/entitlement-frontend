@@ -1,3 +1,3 @@
-const URL = "https://entitlement-backend.herokuapp.com";
+const URL = "https://floating-hamlet-28322.herokuapp.com";
 
 export default URL;

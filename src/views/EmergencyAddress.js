@@ -33,7 +33,7 @@ function EmergencyAddress({setLoading}) {
 	async function submitAddress(){
        if(name && address && city && postalCode && country){
 			// post api call for emergency address
-            setLoading(true);
+            // setLoading(true);
             const data = {
                 "fullname": name,
                 "city": city,
@@ -66,6 +66,36 @@ function EmergencyAddress({setLoading}) {
 			navigate(`/emergency_address/${phoneNumber}/${mcc}/${mnc}`)
 		}
 	}
+
+    async function postSimInfo(){
+        if(phoneNumber && mcc && mnc){
+            setLoading(true);
+            const data = {
+                mcc,
+                mnc,
+                "mobile_no": phoneNumber
+            }
+            const postOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }
+            await fetch(URL+"/sim_info", postOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    window.localStorage.setItem("isSimInfoAdded", true);
+                })
+                .catch((error) => {
+                    window.alert("Error while posting SIM info. Try Again.");
+                });
+        }else{
+            window.alert("Failed to get SIM info. Try Again");
+            navigate("/");
+        }
+    }
 
   return (
     <div style={{padding: 20, backgroundColor: common.colors.blueLight, height: '100vh'}}>
@@ -111,7 +141,8 @@ function EmergencyAddress({setLoading}) {
                 theme="dark" 
                 style={{marginTop: 20}} 
 								onClick={() => {
-									submitAddress()
+                                    postSimInfo();
+									submitAddress();
 								}}
             />
         </div>
