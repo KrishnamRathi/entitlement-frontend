@@ -24,6 +24,7 @@ function EmergencyAddress({setLoading}) {
         }else if(isAddressAdded){
             window.alert("Emergency Address already added");
             // Do next step i.e. redirect to next flow
+            navigate('/success')
         } else if(!phoneNumber){
             navigate('/');
             window.alert("Not able to fetch mobile number.");
@@ -55,6 +56,7 @@ function EmergencyAddress({setLoading}) {
                     console.log('Success:', data);
                     window.localStorage.setItem("isAddressAdded", true);
                     window.alert("Verification completed successfully.");
+                    navigate('/success');
                     setLoading(false);
                 })
                 .catch((error) => {
@@ -93,7 +95,7 @@ function EmergencyAddress({setLoading}) {
                 });
         }else{
             window.alert("Failed to get SIM info. Try Again");
-            navigate("/");
+            navigate("/failed");
         }
     }
 
